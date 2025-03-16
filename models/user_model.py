@@ -1,13 +1,16 @@
-from pydantic import BaseModel, EmailStr
+from sqlalchemy import Column, Integer, String
 
-class UserCreate(BaseModel):
-    name: str
-    email: EmailStr
+from data.db_config import Base
 
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    email: EmailStr
+class User(Base):
+    __tablename__= "user"
 
-    class Config:
-        orm_mode = True
+    user_id=Column(Integer,primary_key=True,index=True, autoincrement=True)
+    username=Column(String,unique=True,nullable=False)
+    email=Column(String,unique=True,nullable=False)
+    password=Column(String,nullable=False)
+    job_title=Column(String,nullable=True)
+    fname=Column(String,nullable=False)
+    lname=Column(String,nullable=False)
+   
+    

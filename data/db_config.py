@@ -4,26 +4,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Create Base class first
-Base = declarative_base()
+
 
 # Create engine
-engine = create_engine(
-    f"sqlite:///./mydatabase.db",
-    connect_args={"check_same_thread": False}
-)
-
+engine = create_engine('postgresql://postgres:1234@localhost/snap_scope')
 # Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-from schema.user_schema import User
+Base = declarative_base()
 
-# Create tables
-Base.metadata.create_all(bind=engine)
-
-# Database dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
