@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from data.db_config import SessionLocal,engine
 from sqlalchemy.orm import Session
 
-from schema.user_schema import UserCreate, UserResponse,Token
+from schema.user_schema import UserCreate, UserResponse,Token,GroupCreate ,RoleCreate
 from services.user_services import UserService
 
 from typing import Annotated
@@ -23,11 +23,9 @@ def get_db():
 
 
 
-@router.get("/e")
-def hel():
-    return({"message":"hello111111"})
 
-@router.post("/", response_model=UserResponse,status_code=status.HTTP_201_CREATED)
+
+@router.post("/createUser", response_model=UserResponse,status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     print('---=---')
     print(user)
@@ -38,6 +36,25 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
 async def login(user_credentials:Annotated[OAuth2PasswordRequestForm,Depends()],db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.login_user(db,user_credentials)
+
+
+@router.post('/groupCreate')
+async def create_group(group:GroupCreate,db:Session=Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.create_group(db,group)
+
+@router.post('/role')
+async def create_role(role:RoleCreate,db:Session=Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.create_role(db,role)
+    
+
+
+
+
+
+
+
 '''
 @router.get('/u')
 async def getuser(db:Session=Depends(get_db), id : int):

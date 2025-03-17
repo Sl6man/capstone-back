@@ -3,11 +3,10 @@ from fastapi import status,Depends
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 
 from fastapi.exceptions import HTTPException
-from jose import jwt ,JWTError
-
+from jose import jwt 
 from sqlalchemy.orm import Session
 
-from schema.user_schema import UserCreate
+from schema.user_schema import UserCreate,GroupCreate,RoleCreate
 from repositories.user_repository import UserRepository
 
 from werkzeug.security import generate_password_hash ,check_password_hash
@@ -28,6 +27,21 @@ class UserService:
 
         
     def register_user(self,db: Session, user: UserCreate):
+        
+        group=self.fetch_group_by_id(db,user.group_id)
+        if not group :
+            raise HTTPException(status_code=400 ,detail='Group does not exist')
+
+
+        role=self.fetch_role_by_id(db,user.role_id)
+        if not role:
+            raise HTTPException(status_code=400 ,detail='Role does not exist')
+        
+
+        username=self.fetch_user_by_username(db,user.username)
+        if username :
+            raise HTTPException(status_code=400 ,detail='Username Already Exists')
+
         return self.repository.create_user(db, user)
     
 
@@ -45,22 +59,16 @@ class UserService:
 
 
 
+    def create_group(self,db:Session,group:GroupCreate):
 
+        group_name=self.fetch_group_by_name(db,group.name)
+        if group_name:
+            raise HTTPException(status_code=400 , detail='Group Already Exists')
 
-    def fetch_user(db: Session, user_id: int):
-        return UserRepository.get_user(db, user_id)
-
-
-
-
-    def fetch_users(db: Session, skip: int = 0, limit: int = 10):
-        return UserRepository.get_users(db, skip, limit)
-
-
-
-
-    def fetch_user_by_username(self,db: Session, user_usename: str):
-        return UserRepository.get_user_by_username(db, user_usename)    
+        return self.repository.create_group(db, group)
+    
+    def create_role(self,db:Session,role:RoleCreate):
+        return self.repository.create_role(db,role)
 
 
 
@@ -70,4 +78,36 @@ class UserService:
         encode.update({'exp':expires})
 
         return jwt.encode(encode,self.SECRET_KEY,algorithm=self.ALGORITHM)
+
+
+
+
+
+
+    def fetch_user(db: Session, user_id: int):
+        return UserRepository.get_user(db, user_id)
+
+    def fetch_user_by_username(self,db: Session, user_usename: str):
+        return UserRepository.get_user_by_username(db, user_usename)    
+
+    def fetch_users(db: Session, skip: int = 0, limit: int = 10):
+        return UserRepository.get_users(db, skip, limit)
+
+
+
+    def fetch_group_by_id(self,db: Session, group_id: str):
+        return UserRepository.get_group_by_id(db, group_id)    
+
+    def fetch_group_by_name(self,db: Session, group_name: str):
+        return UserRepository.get_group_by_name(db, group_name)
+
+
+
+    def fetch_role_by_id(self,db: Session, role_id: str):
+        return UserRepository.get_role_by_id(db, role_id)    
+
+
+
+
+
 
