@@ -4,6 +4,8 @@ from data.db_config import SessionLocal,engine
 from sqlalchemy.orm import Session
 
 from schema.user_schema import UserCreate, UserResponse,Token,GroupCreate ,RoleCreate,GroupResponse,RoleResponse,UsersInfoResonse
+
+from security.permissions import get_current_user_role
 from services.user_services import UserService
 
 from typing import Annotated
@@ -43,7 +45,8 @@ async def get_roles(db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.fetch_all_roles(db)
 
-
+# update the URLs with the best practices 
+# for example /createUser -> /create/user
 
 #-----------------------POST-------------------------------------
 @router.post("/createUser", response_model=UserResponse,status_code=status.HTTP_201_CREATED)
@@ -74,9 +77,10 @@ async def create_role(role:RoleCreate,db:Session=Depends(get_db)):
     return user_service.create_role(db,role)
     
 
-
-
-
+@router.get('/test')
+def test_method(role: str = Depends(get_current_user_role), db:Session=Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.test_use(role_id=role)
 
 
 '''

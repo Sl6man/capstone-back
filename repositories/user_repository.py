@@ -6,7 +6,6 @@ class UserRepository:
     def __init__(self,db:Session):
         self.db = db
 
-    
     def create_user(self,db: Session, user: UserCreate):
         db_user = User(
             username=user.username,
@@ -23,7 +22,6 @@ class UserRepository:
         db.refresh(db_user)
         return db_user    
 
-
     def create_group(self,db:Session,group:GroupCreate):
         db_group=Group(
             name=group.name
@@ -32,8 +30,6 @@ class UserRepository:
         db.commit()
         db.refresh(db_group)
         return db_group
-    
-
 
     def create_role(self,db:Session,role:RoleCreate):
         db_role=Role(
@@ -71,7 +67,7 @@ class UserRepository:
 
 
 
-    def get_role_by_id(db: Session, role_id: str):
+    def get_role_by_id(db:Session,role_id: str):
         return db.query(Role).filter(Role.role_id == role_id).first()  
 
     def get_all_roles(db:Session):
