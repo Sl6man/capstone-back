@@ -6,7 +6,6 @@ class UserRepository:
     def __init__(self,db:Session):
         self.db = db
 
-    
     def create_user(self,db: Session, user: UserCreate):
         db_user = User(
             username=user.username,
@@ -23,7 +22,6 @@ class UserRepository:
         db.refresh(db_user)
         return db_user    
 
-
     def create_group(self,db:Session,group:GroupCreate):
         db_group=Group(
             name=group.name
@@ -32,8 +30,6 @@ class UserRepository:
         db.commit()
         db.refresh(db_group)
         return db_group
-    
-
 
     def create_role(self,db:Session,role:RoleCreate):
         db_role=Role(
@@ -45,14 +41,11 @@ class UserRepository:
         db.refresh(db_role)
         return db_role
 
-
     def get_user(db: Session, user_id: int):
         return db.query(User).filter(User.user_id == user_id).first()
     
     def get_user_by_username(db: Session, user_username: str):
         return db.query(User).filter(User.username == user_username).first()    
-
-
 
     def get_group_by_id(db: Session, group_id: str):
         return db.query(Group).filter(Group.group_id == group_id).first()  
@@ -60,10 +53,8 @@ class UserRepository:
     def get_group_by_name(db:Session,group_name:str):
         return db.query(Group).filter(Group.name == group_name).first()
 
-    def get_role_by_id(db: Session, role_id: str):
+    def get_role_by_id(db:Session,role_id: str):
         return db.query(Role).filter(Role.role_id == role_id).first()  
-
-
 
     def get_users(db: Session, skip: int = 0, limit: int = 10):
         return db.query(User).offset(skip).limit(limit).all()

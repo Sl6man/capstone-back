@@ -11,6 +11,8 @@ from repositories.user_repository import UserRepository
 
 from werkzeug.security import generate_password_hash ,check_password_hash
 
+from security.permissions import has_permission
+
 
 
 
@@ -19,7 +21,7 @@ class UserService:
         self.db=db
         self.repository = UserRepository(db)
 
-
+        # create .env file and save this there 
         self.SECRET_KEY='e5bddc5ac6b78059204847592d3c26079eb505af91f31640ffa74a8a8d7f9dbd'
         self.ALGORITHM='HS256'
         self.TOKEN_EXPIRE_MIN=30
@@ -45,13 +47,13 @@ class UserService:
         return self.repository.create_user(db, user)
     
 
-
-
     def login_user(self,db:Session ,user_credentials:OAuth2PasswordRequestForm ):
         db_user=self.fetch_user_by_username(db,user_credentials.username)
 
-        if db_user and check_password_hash(db_user.password,user_credentials.password):
-            token=self.create_access_token(db_user.username,db_user.user_id,timedelta(minutes=20))
+        if db_user and check_password_hash(db_user.password,user_credentials.password):            
+            role_name = role=self.fetch_role_by_id(db,db_user.role_id).name
+            
+            token=self.create_access_token(db_user.username,db_user.user_id, role_name,timedelta(minutes=20))
             print({'access_token':token,'token_type':'bearer'})
             return {'access_token':token,'token_type':'bearer'}
 
@@ -60,7 +62,6 @@ class UserService:
 
 
     def create_group(self,db:Session,group:GroupCreate):
-
         group_name=self.fetch_group_by_name(db,group.name)
         if group_name:
             raise HTTPException(status_code=400 , detail='Group Already Exists')
@@ -70,19 +71,12 @@ class UserService:
     def create_role(self,db:Session,role:RoleCreate):
         return self.repository.create_role(db,role)
 
-
-
-    def create_access_token(self,username:str ,user_id,exp_delta:timedelta):
-        encode={'sub':username,'id':user_id}
+    def create_access_token(self,username:str ,user_id, role_id:int, exp_delta:timedelta):
+        encode={'sub':username,'id':user_id, 'role_id': role_id}
         expires=datetime.now(timezone.utc)+exp_delta
         encode.update({'exp':expires})
 
         return jwt.encode(encode,self.SECRET_KEY,algorithm=self.ALGORITHM)
-
-
-
-
-
 
     def fetch_user(db: Session, user_id: int):
         return UserRepository.get_user(db, user_id)
@@ -106,6 +100,11 @@ class UserService:
     def fetch_role_by_id(self,db: Session, role_id: str):
         return UserRepository.get_role_by_id(db, role_id)    
 
+    def test_use(self, role_id:str):
+        if not has_permission(role_id, "team_page", "edit"):
+            raise HTTPException(status_code=403, detail="Permission denied: Cannot edit this page")
+        print(role_id)
+        return True
 
 
 
