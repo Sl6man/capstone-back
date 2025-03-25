@@ -46,11 +46,17 @@ class UserRepository:
         return db_role
 
 
+#------------------------------------get ---------------------------------------------------
+
     def get_user(db: Session, user_id: int):
         return db.query(User).filter(User.user_id == user_id).first()
     
     def get_user_by_username(db: Session, user_username: str):
         return db.query(User).filter(User.username == user_username).first()    
+
+    def get_users_for_table(db:Session):
+        return db.query(User).join(Group).join(Role).all()
+
 
 
 
@@ -59,11 +65,17 @@ class UserRepository:
 
     def get_group_by_name(db:Session,group_name:str):
         return db.query(Group).filter(Group.name == group_name).first()
+    
+    def get_all_groups(db:Session):
+        return db.query(Group).all()
+
+
 
     def get_role_by_id(db: Session, role_id: str):
         return db.query(Role).filter(Role.role_id == role_id).first()  
 
-
+    def get_all_roles(db:Session):
+        return db.query(Role).all()
 
     def get_users(db: Session, skip: int = 0, limit: int = 10):
         return db.query(User).offset(skip).limit(limit).all()

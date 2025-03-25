@@ -6,7 +6,7 @@ from fastapi.exceptions import HTTPException
 from jose import jwt 
 from sqlalchemy.orm import Session
 
-from schema.user_schema import UserCreate,GroupCreate,RoleCreate
+from schema.user_schema import UserCreate,GroupCreate,RoleCreate,UsersInfoResonse
 from repositories.user_repository import UserRepository
 
 from werkzeug.security import generate_password_hash ,check_password_hash
@@ -81,17 +81,32 @@ class UserService:
 
 
 
+    def fetch_all_groups(self,db:Session):
+        return UserRepository.get_all_groups(db)
 
 
-
-    def fetch_user(db: Session, user_id: int):
+    def fetch_user(self ,db: Session, user_id: int):
         return UserRepository.get_user(db, user_id)
 
     def fetch_user_by_username(self,db: Session, user_usename: str):
         return UserRepository.get_user_by_username(db, user_usename)    
 
-    def fetch_users(db: Session, skip: int = 0, limit: int = 10):
-        return UserRepository.get_users(db, skip, limit)
+    def fetch_users_for_table(self,db:Session):
+        users=UserRepository.get_users_for_table(db)
+
+        users_list=[]
+        for user in users:
+            
+            user_info=UsersInfoResonse(
+                id=user.user_id,
+                name=f'{user.fname} {user.lname}',
+                email=user.email,
+                group=user.group.name,
+                role=user.role.name,
+            )
+            users_list.append(user_info)
+
+        return users_list    
 
 
 
@@ -106,7 +121,8 @@ class UserService:
     def fetch_role_by_id(self,db: Session, role_id: str):
         return UserRepository.get_role_by_id(db, role_id)    
 
-
+    def fetch_all_roles(self,db:Session):
+        return UserRepository.get_all_roles(db)
 
 
 
