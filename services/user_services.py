@@ -103,6 +103,7 @@ class UserService:
     def test_use(self, role_id:str):
         if not has_permission(role_id, "team_page", "edit"):
             raise HTTPException(status_code=403, detail="Permission denied: Cannot edit this page")
+        
         print(role_id)
         return True
 

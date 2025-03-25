@@ -57,9 +57,6 @@ def test_method(role: str = Depends(get_current_user_role), db:Session=Depends(g
 
 
 
-
-
-
 '''
 @router.get('/u')
 async def getuser(db:Session=Depends(get_db), id : int):
