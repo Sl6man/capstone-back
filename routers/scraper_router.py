@@ -1,0 +1,44 @@
+from fastapi import APIRouter, HTTPException ,Depends ,status
+# from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
+from data.db_config import SessionLocal,engine
+from sqlalchemy.orm import Session
+
+from typing import Annotated
+
+from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead
+from services.scraper_services import ScraperService
+
+
+
+router = APIRouter(prefix="/scraper", tags=["scraper"])
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.get('/{scraper_id}', response_model=ScraperRead, status_code=status.HTTP_200_OK)
+async def get_scraper(scraper_id: int, db: Session = Depends(get_db)):
+    scraper_service = ScraperService(db)
+    # return scraper_service.get_scraper_by_id(scraper_id)
+
+
+@router.get('/', response_model=list[ScraperRead], status_code=status.HTTP_200_OK)
+async def get_all_scrapers(db: Session = Depends(get_db)):
+    scraper_service = ScraperService(db)
+# return scraper_service.get_all_scrapers()
+
+
+@router.post('/create', response_model=ScraperRead, status_code=status.HTTP_201_CREATED)
+async def create_scraper(scraper: ScraperCreate, db: Session = Depends(get_db)):
+    scraper_service = ScraperService(db)
+    return scraper_service.create_scraper(scraper)
+
+
+@router.post('/create/location', response_model=LocationRead, status_code=status.HTTP_201_CREATED)
+async def create_location(location:LocationCreate, db: Session = Depends(get_db)):
+    scraper_service = ScraperService(db)
+    return scraper_service.create_location(location)
