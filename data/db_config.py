@@ -7,7 +7,15 @@ from sqlalchemy.orm import sessionmaker
 
 
 # Create engine
-engine = create_engine("postgresql://postgres:your_password@localhost:5432/snap_scope")
+
+
+
+## engine = create_engine("postgresql://postgres:your_password@localhost:5432/snap_scope") # for sultan
+
+engine = create_engine("postgresql://postgres:1234@localhost/snap_scope")    # for khaled
+
+
+
 # Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

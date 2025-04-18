@@ -13,7 +13,33 @@ class UserCreate(BaseModel):
     password:str
     group_id: int
     role_id: int
- 
+
+class UserUpdate(BaseModel):
+    
+    email: Optional[EmailStr]= None
+    job_title: Optional[str]= None
+    fname: Optional[str]= None
+    lname: Optional[str]= None
+    group_id: Optional[int]= None
+    role_id: Optional[int]= None
+
+    class Config:
+       from_attributes = True
+
+
+
+
+class UserEditResponse(BaseModel):
+    
+    username:str
+    email:EmailStr
+    job_title:str 
+    fname:str
+    lname:str
+    group_id: int
+    role_id: int
+
+
 class UsersInfoResonse(BaseModel):
     id:int
     name:str

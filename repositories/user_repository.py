@@ -1,5 +1,5 @@
 from sqlalchemy.orm import  Session
-from schema.user_schema import UserCreate,GroupCreate,RoleCreate
+from schema.user_schema import UserCreate,GroupCreate,RoleCreate,UserUpdate
 from models.user_model import User,Group,Role
 from werkzeug.security import generate_password_hash ,check_password_hash
 class UserRepository:
@@ -73,5 +73,30 @@ class UserRepository:
     def get_all_roles(db:Session):
         return db.query(Role).all()
 
-    def get_users(db: Session, skip: int = 0, limit: int = 10):
-        return db.query(User).offset(skip).limit(limit).all()
+
+#----------------- update---------------------
+
+    def update_user(db: Session, user_id: int, user_update: UserUpdate):
+       
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            return None
+
+        for key, value in user_update.model_dump(exclude_unset=True).items():
+            setattr(user, key, value)
+        
+        db.commit()
+        db.refresh(user)
+        return user
+    
+
+
+#-----------------delete---------------------
+
+    def delete_user(self,db: Session, user_id: int):
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            return None
+        db.delete(user)
+        db.commit()
+        return user

@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from data.db_config import SessionLocal,engine
 from sqlalchemy.orm import Session
 
-from schema.user_schema import UserCreate, UserResponse,Token,GroupCreate ,RoleCreate,GroupResponse,RoleResponse,UsersInfoResonse
+from schema.user_schema import UserCreate, UserResponse,Token,GroupCreate ,RoleCreate,GroupResponse,RoleResponse, UserUpdate,UsersInfoResonse,UserEditResponse
 
 from security.permissions import get_current_user_role
 from services.user_services import UserService
@@ -23,8 +23,8 @@ def get_db():
     finally:
         db.close()
 
-
-@router.get('/userInfo/{user_id}' ,response_model=UserCreate)
+#-----------------------GET-------------------------------------
+@router.get('/user/info/{user_id}' ,response_model=UserEditResponse)
 async def get_user_info( user_id:int,db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.fetch_user(db,user_id)
@@ -49,7 +49,7 @@ async def get_roles(db:Session=Depends(get_db)):
 # for example /createUser -> /create/user
 
 #-----------------------POST-------------------------------------
-@router.post("/createUser", response_model=UserResponse,status_code=status.HTTP_201_CREATED)
+@router.post("/create/user", response_model=UserResponse,status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     print('---=---')
     print(user)
@@ -76,15 +76,33 @@ async def create_role(role:RoleCreate,db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.create_role(db,role)
     
-
+#------------------------------------test-------------------------------------------------------------------
 @router.get('/test')
 def test_method(role: str = Depends(get_current_user_role), db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.test_use(role_id=role)
 
 
-'''
-@router.get('/u')
-async def getuser(db:Session=Depends(get_db), id : int):
+#-----------------patch---------------------
+
+@router.patch("/edit/user/{user_id}")
+async def edit_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+
+   
     user_service = UserService(db)
-    return  user_service.fetch_user(db,id)'''
+    updated_user = user_service.edit_user(db, user_id, user_update)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated_user
+
+
+#-----------------delete---------------------
+
+@router.delete("/delete/user/{user_id}")
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    print(user_id)
+    user_service = UserService(db)
+    deleted_user = user_service.delete_user(db, user_id)
+    if not deleted_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}

@@ -6,7 +6,7 @@ from fastapi.exceptions import HTTPException
 from jose import jwt 
 from sqlalchemy.orm import Session
 
-from schema.user_schema import UserCreate,GroupCreate,RoleCreate,UsersInfoResonse
+from schema.user_schema import UserCreate,GroupCreate,RoleCreate, UserUpdate,UsersInfoResonse
 from repositories.user_repository import UserRepository
 
 from werkzeug.security import generate_password_hash ,check_password_hash
@@ -123,7 +123,7 @@ class UserService:
     def fetch_all_roles(self,db:Session):
         return UserRepository.get_all_roles(db)
     
-
+#-------------- test--------------------
     
     def test_use(self, role_id:str):
         if not has_permission(role_id, "team_page", "edit"):
@@ -132,7 +132,20 @@ class UserService:
         print(role_id)
         return True
 
+#----------------------- patch---------------------------------
 
+
+    def edit_user(self, db: Session, user_id: int, user_update: UserUpdate):
+        return UserRepository.update_user(db, user_id, user_update)
+
+
+
+
+#-----------------delete-----------------------------------------------
+
+
+    def delete_user(self, db: Session, user_id: int):
+        return self.repository.delete_user(db, user_id)
 
 
 
