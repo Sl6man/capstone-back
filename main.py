@@ -16,26 +16,10 @@ print("✅ Tables created successfully++++++++++++++++++++++++++++++++++++++++++
 oauth2_schema=OAuth2PasswordBearer(tokenUrl="token")
 
 
-def create_default_roles():
-    db: Session = SessionLocal()
-    default_roles = ["admin", "editor", "viewer"]
-    
-    # Check if roles exist
-    existing_roles = db.query(Role).count()
-    if existing_roles == 0:
-        for role in default_roles:
-            db.add(Role(name=role))
-        db.commit()
-    
-    db.close()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    create_default_roles()
-    yield
 
 
-app = FastAPI(lifespan=lifespan)
+
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,

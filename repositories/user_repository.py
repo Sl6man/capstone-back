@@ -52,6 +52,10 @@ class UserRepository:
 
     def get_users_for_table(db:Session):
         return db.query(User).join(Group).join(Role).all()
+    
+    def get_user_by_email(db: Session, email: str):  #write by Fahad
+        return db.query(User).filter(User.email == email).first()
+
 
 
 

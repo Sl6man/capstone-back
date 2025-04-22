@@ -44,7 +44,17 @@ class UserService:
         if username :
             raise HTTPException(status_code=400 ,detail='Username Already Exists')
 
-        return self.repository.create_user(db, user)
+        
+        email = self.fetch_user_by_email(db, user.email)     #Write by Fahad
+        if email:
+            raise HTTPException(status_code=400, detail='Email Already Exists') #Write by Fahad
+
+        return self.repository.create_user(db, user)  #Write by Fahad
+
+
+
+
+    
     
 
     def login_user(self,db:Session ,user_credentials:OAuth2PasswordRequestForm ):
@@ -122,6 +132,10 @@ class UserService:
 
     def fetch_all_roles(self,db:Session):
         return UserRepository.get_all_roles(db)
+    
+    def fetch_user_by_email(self, db: Session, email: str):  #write by Fahad
+        return UserRepository.get_user_by_email(db, email)   
+
     
 #-------------- test--------------------
     
