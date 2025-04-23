@@ -33,7 +33,7 @@ class UserEditResponse(BaseModel):
     
     username:str
     email:EmailStr
-    job_title:str 
+    job_title: Optional[str] = None  #write by Fahad
     fname:str
     lname:str
     group_id: int

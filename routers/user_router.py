@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from data.db_config import SessionLocal,engine
 from sqlalchemy.orm import Session
 
+
 from schema.user_schema import UserCreate, UserResponse,Token,GroupCreate ,RoleCreate,GroupResponse,RoleResponse, UserUpdate,UsersInfoResonse,UserEditResponse
 
 from security.permissions import get_current_user_role
@@ -44,6 +45,9 @@ async def get_groups(db:Session=Depends(get_db)):
 async def get_roles(db:Session=Depends(get_db)):
     user_service = UserService(db)
     return user_service.fetch_all_roles(db)
+
+
+
 
 # update the URLs with the best practices 
 # for example /createUser -> /create/user

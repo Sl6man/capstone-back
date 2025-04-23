@@ -94,12 +94,26 @@ class UserService:
         return UserRepository.get_all_groups(db)
 
 
-    def fetch_user(self ,db: Session, user_id: int):
-        return UserRepository.get_user(db, user_id)
+    from fastapi import HTTPException
+
+    def fetch_user(self, db: Session, user_id: int):
+        user = UserRepository.get_user(db, user_id)
+
+        if not user:
+           raise HTTPException(status_code=404, detail="User not found")
+        return user
+
 
     def fetch_user_by_username(self,db: Session, user_usename: str):
         return UserRepository.get_user_by_username(db, user_usename)    
 
+    def fetch_user_by_email(self,db: Session,email:str):
+        return UserRepository.get_user_by_email(email)   
+ 
+    
+    
+    
+    
     def fetch_users_for_table(self,db:Session):
         users=UserRepository.get_users_for_table(db)
 
@@ -150,7 +164,15 @@ class UserService:
 
 
     def edit_user(self, db: Session, user_id: int, user_update: UserUpdate):
+
+
+        email=self.fetch_user_by_email(db,user_update.email)
+        if email:
+            raise HTTPException(status_code=409,detail="Email already exists")
+
         return UserRepository.update_user(db, user_id, user_update)
+    
+    
 
 
 
