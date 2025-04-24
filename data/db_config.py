@@ -12,8 +12,8 @@ from sqlalchemy.orm import sessionmaker
 
 ## engine = create_engine("postgresql://postgres:your_password@localhost:5432/snap_scope") # for sultan
 
-#engine = create_engine("postgresql://postgres:1234@localhost/snap_scope")    # for khaled
-engine = create_engine("postgresql://postgres:Fahad&2003@localhost/GP")    # for Fahad
+engine = create_engine("postgresql://postgres:1234@localhost/snap_scope")    # for khaled
+#engine = create_engine("postgresql://postgres:Fahad&2003@localhost/GP")    # for Fahad
 
 
 

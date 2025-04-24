@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from typing import Annotated
 
-from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead
+from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase
 from services.scraper_services import ScraperService
 
 
@@ -20,16 +20,16 @@ def get_db():
         db.close()
 
 
-@router.get('/{scraper_id}', response_model=ScraperRead, status_code=status.HTTP_200_OK)
+@router.get('/{scraper_id}', response_model=ScraperBase, status_code=status.HTTP_200_OK)
 async def get_scraper(scraper_id: int, db: Session = Depends(get_db)):
     scraper_service = ScraperService(db)
-    # return scraper_service.get_scraper_by_id(scraper_id)
+    return scraper_service.get_scraper_by_id(scraper_id)
 
 
 @router.get('/', response_model=list[ScraperRead], status_code=status.HTTP_200_OK)
 async def get_all_scrapers(db: Session = Depends(get_db)):
     scraper_service = ScraperService(db)
-# return scraper_service.get_all_scrapers()
+    return scraper_service.get_all_scrapers()
 
 
 @router.post('/create', response_model=ScraperRead, status_code=status.HTTP_201_CREATED)

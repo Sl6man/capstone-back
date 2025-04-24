@@ -35,3 +35,9 @@ class ScraperRepository:
         self.db.commit()
         self.db.refresh(db_location)
         return db_location
+    
+    def get_all_scraper(self):
+        return self.db.query(Scraper).all()
+    
+    def get_scraper_by_id(self,scraper_id):
+        return self.db.query(Scraper).filter(Scraper.scraper_id == scraper_id).first()
