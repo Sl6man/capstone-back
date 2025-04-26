@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from models.user_model import Role
-from routers import scraper_router, user_router
+from routers import scraper_router, user_router,media_router
 from data.db_config import SessionLocal, engine, Base
 from fastapi.middleware.cors import CORSMiddleware 
 from fastapi_jwt import JwtAccessBearer
@@ -32,3 +32,4 @@ app.add_middleware(
 # Include the user router
 app.include_router(user_router.router)
 app.include_router(scraper_router.router)
+app.include_router(media_router.router)

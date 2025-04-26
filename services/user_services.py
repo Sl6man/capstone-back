@@ -12,7 +12,7 @@ from repositories.user_repository import UserRepository
 from werkzeug.security import generate_password_hash ,check_password_hash
 
 from security.permissions import has_permission
-
+from fastapi import HTTPException
 
 
 
@@ -94,7 +94,7 @@ class UserService:
         return UserRepository.get_all_groups(db)
 
 
-    from fastapi import HTTPException
+
 
     def fetch_user(self, db: Session, user_id: int):
         user = UserRepository.get_user(db, user_id)

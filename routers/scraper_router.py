@@ -5,10 +5,12 @@ from sqlalchemy.orm import Session
 
 from typing import Annotated
 
+from schema.media_schema import Neighborhood
+
 from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase
 from services.scraper_services import ScraperService
 
-
+from data.mongo_config import scrape_runs_collection
 
 router = APIRouter(prefix="/scraper", tags=["scraper"])
 
@@ -42,3 +44,7 @@ async def create_scraper(scraper: ScraperCreate, db: Session = Depends(get_db)):
 async def create_location(location:LocationCreate, db: Session = Depends(get_db)):
     scraper_service = ScraperService(db)
     return scraper_service.create_location(location)
+
+
+#-------------------media---------------------
+
