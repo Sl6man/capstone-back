@@ -1,6 +1,7 @@
 
 from datetime import datetime, timezone
-from sqlalchemy.orm import  Session
+from pymongo import MongoClient
+from sqlalchemy.orm import  Session, joinedload
 
 from models.scraper_model import Location, Scraper
 from schema.scraper_schema import LocationCreate, ScraperCreate
@@ -9,6 +10,8 @@ from schema.scraper_schema import LocationCreate, ScraperCreate
 class ScraperRepository:
     def __init__(self, db: Session):
         self.db = db
+        client = MongoClient("mongodb://localhost:27017")
+        self.db_mongo = client["snapchat_scraper"] 
             
     def create_scraper(self, scraper: ScraperCreate):
         db_scraper = Scraper(
@@ -40,4 +43,8 @@ class ScraperRepository:
         return self.db.query(Scraper).all()
     
     def get_scraper_by_id(self,scraper_id):
-        return self.db.query(Scraper).filter(Scraper.scraper_id == scraper_id).first()
+        return self.db.query(Scraper).options(joinedload(Scraper.locations)).filter(Scraper.scraper_id == scraper_id).first()
+    
+    def get_number_of_media(self, scraper_id):
+        return self.db_mongo.media.count_documents({"scraper_id": scraper_id})
+

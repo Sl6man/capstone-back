@@ -9,13 +9,10 @@ class ScraperBase(BaseModel):
     title: str
     status: bool
     started_date: datetime
-    end_date: datetime
-
-
+    end_date: datetime    
+    
 class ScraperCreate(ScraperBase):
     pass
-
-
 class ScraperRead(ScraperBase):
     scraper_id: int
     created_at: Optional[datetime] = None
@@ -33,6 +30,9 @@ class LocationBase(BaseModel):
     lat: float
     long: float
     scraper_id: Optional[int] = None
+    
+    class Config:
+        orm_mode = True 
 
 
 class LocationCreate(LocationBase):
@@ -44,3 +44,14 @@ class LocationRead(LocationBase):
 
     class Config:
         orm_mode = True
+
+
+class ScraperWithLocations(ScraperBase):
+    scraper_id: int
+    created_at: datetime
+    updated_at: datetime
+    locations: list[LocationBase] = []
+    media_count: int
+    
+    class Config:
+        orm_mode = True 

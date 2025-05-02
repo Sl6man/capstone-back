@@ -7,7 +7,7 @@ from typing import Annotated
 
 from schema.media_schema import Neighborhood
 
-from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase
+from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase, ScraperWithLocations
 from services.scraper_services import ScraperService
 
 from data.mongo_config import scrape_runs_collection
@@ -22,7 +22,7 @@ def get_db():
         db.close()
 
 
-@router.get('/{scraper_id}', response_model=ScraperBase, status_code=status.HTTP_200_OK)
+@router.get('/{scraper_id}', response_model=ScraperWithLocations, status_code=status.HTTP_200_OK)
 async def get_scraper(scraper_id: int, db: Session = Depends(get_db)):
     scraper_service = ScraperService(db)
     return scraper_service.get_scraper_by_id(scraper_id)

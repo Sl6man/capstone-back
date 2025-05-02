@@ -17,18 +17,25 @@ class Scraper(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
+    locations = relationship('Location', back_populates='scraper', cascade="all, delete-orphan")
+
     
     
     
 class Location(Base):
     __tablename__ = 'location'
     
-    location_id = scraper_id = Column(Integer, primary_key=True, autoincrement=True)    
+    location_id = Column(Integer, primary_key=True, autoincrement=True)
     neighborhood_name = Column(String)
-    radius=Column(Float, nullable=False)
-    lat=Column(Float, nullable=False)
-    long=Column(Float, nullable=False)
+    radius = Column(Float, nullable=False)
+    lat = Column(Float, nullable=False)
+    long = Column(Float, nullable=False)
     
-    scraper_id = Column(Integer, ForeignKey('scraper.scraper_id'), nullable=True)
+    scraper_id = Column(
+        Integer,
+        ForeignKey('scraper.scraper_id', ondelete="CASCADE"),
+        nullable=True
+    )
     
-    scraper = relationship('Scraper')
+    scraper = relationship('Scraper', back_populates='locations', passive_deletes=True)
+

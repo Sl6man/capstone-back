@@ -1,15 +1,23 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 import os
+import asyncio
 
 load_dotenv()
 
 MONGO_DETAILS = os.getenv("MONGO_URL")
 
 client = AsyncIOMotorClient(MONGO_DETAILS)
-db = client["snap_scope"]
+db = client["snapchat_riyadh"]
+
+scrape_runs_collection = db.get_collection("scrape_runs")
+snaps_collection = db.get_collection("media")
 
 
-scrape_runs_collection = db.get_collection("snapchat_riyadh.scrape_runs")
-snaps_collection = db.get_collection("snapchat_riyadh.media")
-
+async def check_mongo_connection():
+    try:
+        # 🟢 Try to ping the server
+        await client.admin.command("ping")
+        print("✅ Successfully connected to MongoDB!")
+    except Exception as e:
+        print("❌ Failed to connect to MongoDB:", e)

@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from data.mongo_config import check_mongo_connection
 from models.user_model import Role
 from routers import scraper_router, user_router,media_router
 from data.db_config import SessionLocal, engine, Base
