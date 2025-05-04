@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from sqlalchemy.orm import  Session, joinedload
 
 from models.scraper_model import Location, Scraper
-from schema.scraper_schema import LocationCreate, ScraperCreate
+from schema.scraper_schema import LocationCreate, ScraperCreate, ScraperUpdate
 
 
 class ScraperRepository:
@@ -39,6 +39,20 @@ class ScraperRepository:
         self.db.refresh(db_location)
         return db_location
     
+    
+    def update_scraper(self, scraper_id: int, scraper_data: ScraperUpdate):
+        scraper = self.db.query(Scraper).filter(Scraper.scraper_id == scraper_id).first()
+        if not scraper:
+            return None
+
+        for key, value in scraper_data.dict(exclude_unset=True).items():
+            setattr(scraper, key, value)
+
+        self.db.commit()
+        self.db.refresh(scraper)
+        return scraper
+    
+    
     def get_all_scraper(self):
         return self.db.query(Scraper).all()
     
@@ -48,3 +62,5 @@ class ScraperRepository:
     def get_number_of_media(self, scraper_id):
         return self.db_mongo.media.count_documents({"scraper_id": scraper_id})
 
+    
+    

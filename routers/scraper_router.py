@@ -7,7 +7,7 @@ from typing import Annotated
 
 from schema.media_schema import Neighborhood
 
-from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase, ScraperWithLocations
+from schema.scraper_schema import LocationCreate, LocationRead, ScraperCreate, ScraperRead,ScraperBase, ScraperUpdate, ScraperWithLocations
 from services.scraper_services import ScraperService
 
 from data.mongo_config import scrape_runs_collection
@@ -38,6 +38,15 @@ async def get_all_scrapers(db: Session = Depends(get_db)):
 async def create_scraper(scraper: ScraperCreate, db: Session = Depends(get_db)):
     scraper_service = ScraperService(db)
     return scraper_service.create_scraper(scraper)
+
+
+@router.put('/update/{scraper_id}', status_code=status.HTTP_200_OK)
+async def update_scraper(scraper_id: int, scraper_data: ScraperUpdate, db: Session = Depends(get_db)):
+    scraper_service = ScraperService(db)
+    updated_scraper = scraper_service.update_scraper(scraper_id, scraper_data)
+    if not updated_scraper:
+        raise HTTPException(status_code=404, detail="Scraper not found")
+    return updated_scraper
 
 
 @router.post('/create/location', response_model=LocationRead, status_code=status.HTTP_201_CREATED)

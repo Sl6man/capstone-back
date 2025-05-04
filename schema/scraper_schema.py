@@ -55,3 +55,13 @@ class ScraperWithLocations(ScraperBase):
     
     class Config:
         orm_mode = True 
+        
+
+class ScraperUpdate(BaseModel):
+    title: Optional[str] = None
+    status: Optional[bool] = None
+    started_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    
+    class Config:
+        orm_mode = True

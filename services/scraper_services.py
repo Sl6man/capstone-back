@@ -55,7 +55,9 @@ class ScraperService:
         scraper_dict["media_count"] = media_collected
 
         return scraper_dict
-
     
     def get_all_scrapers(self):
         return self.repository.get_all_scraper()
+    
+    def update_scraper(self, scraper_id: int, scraper_data):
+        return self.repository.update_scraper(scraper_id, scraper_data)
