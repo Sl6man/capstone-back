@@ -64,3 +64,12 @@ class ScraperRepository:
 
     
     
+#-----------------delete---------------------
+
+    def delete_scraper(self,db: Session, scraper_id: int):
+        scraper = db.query(Scraper).filter(Scraper.scraper_id == scraper_id).first()
+        if not scraper:
+            return None
+        db.delete(scraper)
+        db.commit()
+        return scraper

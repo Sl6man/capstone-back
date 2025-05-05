@@ -61,3 +61,10 @@ class ScraperService:
     
     def update_scraper(self, scraper_id: int, scraper_data):
         return self.repository.update_scraper(scraper_id, scraper_data)
+
+
+#-----------------delete-----------------------------------------------
+
+
+    def delete_scraper(self, db: Session, scraper_id: int):
+        return self.repository.delete_scraper(db, scraper_id)

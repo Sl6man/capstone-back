@@ -10,11 +10,11 @@ ALGORITHM='HS256'
 
 PAGE_PERMISSIONS = {
     "team_page": {
-        'admin': ['view','create','edit', 'delete'],
+        'Admin': ['view','create','edit', 'delete'],
         'user': ['view']
     },
     'scraper_page': {
-        "admin": ['view','create' ,'edit', 'delete'],
+        "Admin": ['view','create' ,'edit', 'delete'],
         'user': ['view', 'edit'],
     }
 }

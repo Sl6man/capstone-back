@@ -55,5 +55,13 @@ async def create_location(location:LocationCreate, db: Session = Depends(get_db)
     return scraper_service.create_location(location)
 
 
-#-------------------media---------------------
+#-------------------delete---------------------
 
+@router.delete("/delete/{scraper_id}")
+async def delete_user(scraper_id: int, db: Session = Depends(get_db)):
+    
+    scraper_service = ScraperService(db)
+    deleted_scraper = scraper_service.delete_scraper(db, scraper_id)
+    if not deleted_scraper:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}

@@ -21,7 +21,7 @@ class UserService:
         self.db=db
         self.repository = UserRepository(db)
 
-        # create .env file and save this there 
+        
         self.SECRET_KEY='e5bddc5ac6b78059204847592d3c26079eb505af91f31640ffa74a8a8d7f9dbd'
         self.ALGORITHM='HS256'
         self.TOKEN_EXPIRE_MIN=30
@@ -45,11 +45,11 @@ class UserService:
             raise HTTPException(status_code=400 ,detail='Username Already Exists')
 
         
-        email = self.fetch_user_by_email(db, user.email)     #Write by Fahad
+        email = self.fetch_user_by_email(db, user.email)     
         if email:
-            raise HTTPException(status_code=400, detail='Email Already Exists') #Write by Fahad
+            raise HTTPException(status_code=400, detail='Email Already Exists')
 
-        return self.repository.create_user(db, user)  #Write by Fahad
+        return self.repository.create_user(db, user)  
 
 
 
@@ -69,7 +69,12 @@ class UserService:
 
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Username or Password')
 
+    def create_access_token(self,username:str ,user_id, role_id:int, exp_delta:timedelta):
+        encode={'sub':username,'id':user_id, 'role_id': role_id}
+        expires=datetime.now(timezone.utc)+exp_delta
+        encode.update({'exp':expires})
 
+        return jwt.encode(encode,self.SECRET_KEY,algorithm=self.ALGORITHM)
 
     def create_group(self,db:Session,group:GroupCreate):
         group_name=self.fetch_group_by_name(db,group.name)
@@ -81,12 +86,7 @@ class UserService:
     def create_role(self,db:Session,role:RoleCreate):
         return self.repository.create_role(db,role)
 
-    def create_access_token(self,username:str ,user_id, role_id:int, exp_delta:timedelta):
-        encode={'sub':username,'id':user_id, 'role_id': role_id}
-        expires=datetime.now(timezone.utc)+exp_delta
-        encode.update({'exp':expires})
 
-        return jwt.encode(encode,self.SECRET_KEY,algorithm=self.ALGORITHM)
 
 
 
@@ -154,7 +154,8 @@ class UserService:
 #-------------- test--------------------
     
     def test_use(self, role_id:str):
-        if not has_permission(role_id, "team_page", "edit"):
+        print(2)
+        if not has_permission("Admin", "team_page", "edit"):
             raise HTTPException(status_code=403, detail="Permission denied: Cannot edit this page")
         
         print(role_id)

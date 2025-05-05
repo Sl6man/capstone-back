@@ -104,7 +104,7 @@ async def edit_user(user_id: int, user_update: UserUpdate, db: Session = Depends
 
 @router.delete("/delete/user/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db)):
-    print(user_id)
+    
     user_service = UserService(db)
     deleted_user = user_service.delete_user(db, user_id)
     if not deleted_user:

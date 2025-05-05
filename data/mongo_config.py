@@ -8,7 +8,9 @@ load_dotenv()
 MONGO_DETAILS = os.getenv("MONGO_URL")
 
 client = AsyncIOMotorClient(MONGO_DETAILS)
-db = client["snapchat_riyadh"]
+#db = client["snapchat_riyadh"]
+db = client["snap_scope"]
+
 
 scrape_runs_collection = db.get_collection("scrape_runs")
 snaps_collection = db.get_collection("media")
